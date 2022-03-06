@@ -39,7 +39,8 @@ use std::io;
 /// particular circuit.
 #[derive(Debug)]
 pub struct VerifyingKey<C: CurveAffine> {
-    domain: EvaluationDomain<C::Scalar>,
+    /// domain
+    pub domain: EvaluationDomain<C::Scalar>,
     /// fixed_commitments
     pub fixed_commitments: Vec<C>,
     /// permutation
@@ -172,5 +173,7 @@ struct Y;
 type ChallengeY<F> = ChallengeScalar<F, Y>;
 
 #[derive(Clone, Copy, Debug)]
-struct X;
-type ChallengeX<F> = ChallengeScalar<F, X>;
+/// X
+pub struct X;
+/// ChallengeX
+pub type ChallengeX<F> = ChallengeScalar<F, X>;

@@ -805,7 +805,8 @@ pub struct ConstraintSystem<F: Field> {
     // Contains an integer for each advice column
     // identifying how many distinct queries it has
     // so far; should be same length as num_advice_columns.
-    num_advice_queries: Vec<usize>,
+    /// num_advice_queries
+    pub num_advice_queries: Vec<usize>,
     /// hehe
     pub instance_queries: Vec<(Column<Instance>, Rotation)>,
     /// hehe

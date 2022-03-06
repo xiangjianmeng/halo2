@@ -313,7 +313,7 @@ impl<C: CurveAffine> super::ProvingKey<C> {
             .map(move |poly| ProverQuery { point: *x, poly })
     }
 
-    pub(in crate::plonk) fn evaluate<E: EncodedChallenge<C>, T: TranscriptWrite<C, E>>(
+    pub fn evaluate<E: EncodedChallenge<C>, T: TranscriptWrite<C, E>>(
         &self,
         x: ChallengeX<C>,
         transcript: &mut T,

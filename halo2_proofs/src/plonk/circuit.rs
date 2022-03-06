@@ -797,7 +797,7 @@ pub struct ConstraintSystem<F: Field> {
     pub(crate) num_instance_columns: usize,
     pub(crate) num_selectors: usize,
     pub(crate) selector_map: Vec<Column<Fixed>>,
-    pub(crate) gates: Vec<Gate<F>>,
+    pub gates: Vec<Gate<F>>,
     pub(crate) advice_queries: Vec<(Column<Advice>, Rotation)>,
     // Contains an integer for each advice column
     // identifying how many distinct queries it has

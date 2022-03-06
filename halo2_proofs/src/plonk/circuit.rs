@@ -756,7 +756,8 @@ impl<F: Field> From<Expression<F>> for Vec<Constraint<F>> {
 }
 
 #[derive(Clone, Debug)]
-pub(crate) struct Gate<F: Field> {
+/// hehe
+pub struct Gate<F: Field> {
     name: &'static str,
     constraint_names: Vec<&'static str>,
     polys: Vec<Expression<F>>,
@@ -797,13 +798,17 @@ pub struct ConstraintSystem<F: Field> {
     pub(crate) num_instance_columns: usize,
     pub(crate) num_selectors: usize,
     pub(crate) selector_map: Vec<Column<Fixed>>,
+    /// hehe
     pub gates: Vec<Gate<F>>,
+    /// hehe
     pub advice_queries: Vec<(Column<Advice>, Rotation)>,
     // Contains an integer for each advice column
     // identifying how many distinct queries it has
     // so far; should be same length as num_advice_columns.
     num_advice_queries: Vec<usize>,
+    /// hehe
     pub instance_queries: Vec<(Column<Instance>, Rotation)>,
+    /// hehe
     pub fixed_queries: Vec<(Column<Fixed>, Rotation)>,
 
     // Permutation argument for performing equality constraints

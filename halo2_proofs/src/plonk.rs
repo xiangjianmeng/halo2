@@ -42,7 +42,8 @@ pub struct VerifyingKey<C: CurveAffine> {
     domain: EvaluationDomain<C::Scalar>,
     /// fixed_commitments
     pub fixed_commitments: Vec<C>,
-    permutation: permutation::VerifyingKey<C>,
+    /// permutation
+    pub permutation: permutation::VerifyingKey<C>,
     /// cs
     pub cs: ConstraintSystem<C::Scalar>,
 }

@@ -20,11 +20,16 @@ use std::io;
 /// These are the prover parameters for the polynomial commitment scheme.
 #[derive(Debug)]
 pub struct Params<C: CurveAffine> {
-    pub(crate) k: u32,
-    pub(crate) n: u64,
-    pub(crate) g: Vec<C>,
-    pub(crate) g_lagrange: Vec<C>,
-    pub(crate) additional_data: Vec<u8>,
+    /// k
+    pub k: u32,
+    /// n
+    pub n: u64,
+    /// g
+    pub g: Vec<C>,
+    /// g_lagrange
+    pub g_lagrange: Vec<C>,
+    /// additional_data
+    pub additional_data: Vec<u8>,
 }
 
 /// These are the verifier parameters for the polynomial commitment scheme.

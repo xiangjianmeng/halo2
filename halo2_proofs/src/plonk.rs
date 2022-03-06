@@ -40,9 +40,9 @@ use std::io;
 #[derive(Debug)]
 pub struct VerifyingKey<C: CurveAffine> {
     domain: EvaluationDomain<C::Scalar>,
-    fixed_commitments: Vec<C>,
+    pub fixed_commitments: Vec<C>,
     permutation: permutation::VerifyingKey<C>,
-    cs: ConstraintSystem<C::Scalar>,
+    pub cs: ConstraintSystem<C::Scalar>,
 }
 
 impl<C: CurveAffine> VerifyingKey<C> {

@@ -18,6 +18,7 @@ pub struct PermutationCommitments<C: CurveAffine> {
     permuted_table_commitment: C,
 }
 
+#[derive(Debug)]
 pub struct Committed<C: CurveAffine> {
     permuted: PermutationCommitments<C>,
     product_commitment: C,

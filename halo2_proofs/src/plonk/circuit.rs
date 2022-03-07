@@ -21,7 +21,8 @@ pub trait ColumnType:
 /// A column with an index and type
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
 pub struct Column<C: ColumnType> {
-    index: usize,
+    /// index
+    pub index: usize,
     column_type: C,
 }
 

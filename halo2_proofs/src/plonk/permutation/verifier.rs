@@ -70,7 +70,8 @@ impl<C: CurveAffine> VerifyingKey<C> {
 }
 
 impl<C: CurveAffine> Committed<C> {
-    pub(crate) fn evaluate<E: EncodedChallenge<C>, T: TranscriptRead<C, E>>(
+    /// evaluate
+    pub fn evaluate<E: EncodedChallenge<C>, T: TranscriptRead<C, E>>(
         self,
         transcript: &mut T,
     ) -> Result<Evaluated<C>, Error> {

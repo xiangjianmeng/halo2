@@ -797,7 +797,8 @@ impl<F: Field> Gate<F> {
 #[derive(Debug, Clone)]
 pub struct ConstraintSystem<F: Field> {
     pub(crate) num_fixed_columns: usize,
-    pub(crate) num_advice_columns: usize,
+    /// num_advice_columns
+    pub num_advice_columns: usize,
     pub(crate) num_instance_columns: usize,
     pub(crate) num_selectors: usize,
     pub(crate) selector_map: Vec<Column<Fixed>>,

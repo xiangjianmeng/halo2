@@ -2,12 +2,17 @@ use super::circuit::Expression;
 use ff::Field;
 
 pub(crate) mod prover;
+/// xixi
 pub mod verifier;
 
 #[derive(Clone, Debug)]
+/// xx
 pub struct Argument<F: Field> {
+    /// xx
     pub name: &'static str,
+    /// xx
     pub input_expressions: Vec<Expression<F>>,
+    /// xx
     pub table_expressions: Vec<Expression<F>>,
 }
 

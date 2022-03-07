@@ -13,18 +13,21 @@ use crate::{
 use ff::Field;
 
 #[derive(Debug)]
+/// xx
 pub struct PermutationCommitments<C: CurveAffine> {
     permuted_input_commitment: C,
     permuted_table_commitment: C,
 }
 
 #[derive(Debug)]
+/// xx
 pub struct Committed<C: CurveAffine> {
     permuted: PermutationCommitments<C>,
     product_commitment: C,
 }
 
 #[derive(Debug)]
+/// xx
 pub struct Evaluated<C: CurveAffine> {
     committed: Committed<C>,
     product_eval: C::Scalar,

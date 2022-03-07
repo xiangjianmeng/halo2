@@ -19,7 +19,8 @@ mod assigned;
 mod circuit;
 mod error;
 mod keygen;
-mod lookup;
+/// hehe
+pub mod lookup;
 pub(crate) mod permutation;
 mod vanishing;
 

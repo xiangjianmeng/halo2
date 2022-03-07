@@ -15,6 +15,7 @@ pub struct Committed<C: CurveAffine> {
     permutation_product_commitments: Vec<C>,
 }
 
+#[derive(Debug)]
 pub struct EvaluatedSet<C: CurveAffine> {
     permutation_product_commitment: C,
     permutation_product_eval: C::Scalar,
@@ -26,6 +27,7 @@ pub struct CommonEvaluated<C: CurveAffine> {
     permutation_evals: Vec<C::Scalar>,
 }
 
+#[derive(Debug)]
 pub struct Evaluated<C: CurveAffine> {
     sets: Vec<EvaluatedSet<C>>,
 }

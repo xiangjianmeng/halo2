@@ -777,7 +777,8 @@ impl<F: Field> Gate<F> {
         self.constraint_names[constraint_index]
     }
 
-    pub(crate) fn polynomials(&self) -> &[Expression<F>] {
+    /// polynonmials
+    pub fn polynomials(&self) -> &[Expression<F>] {
         &self.polys
     }
 

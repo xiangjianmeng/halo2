@@ -13,8 +13,10 @@ use std::io;
 
 /// A permutation argument.
 #[derive(Debug, Clone)]
-pub(crate) struct Argument {
+/// Argument
+pub struct Argument {
     /// A sequence of columns involved in the argument.
+    /// columns
     columns: Vec<Column<Any>>,
 }
 

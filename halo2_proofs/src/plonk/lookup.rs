@@ -2,7 +2,7 @@ use super::circuit::Expression;
 use ff::Field;
 
 pub(crate) mod prover;
-pub(crate) mod verifier;
+pub mod verifier;
 
 #[derive(Clone, Debug)]
 pub struct Argument<F: Field> {

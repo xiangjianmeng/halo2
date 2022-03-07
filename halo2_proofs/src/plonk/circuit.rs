@@ -822,7 +822,8 @@ pub struct ConstraintSystem<F: Field> {
 
     // Vector of lookup arguments, where each corresponds to a sequence of
     // input expressions and a sequence of table expressions involved in the lookup.
-    pub(crate) lookups: Vec<lookup::Argument<F>>,
+    /// lookups
+    pub lookups: Vec<lookup::Argument<F>>,
 
     // Vector of fixed columns, which can be used to store constant values
     // that are copied into advice columns.

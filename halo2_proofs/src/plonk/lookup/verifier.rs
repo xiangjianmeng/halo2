@@ -12,6 +12,7 @@ use crate::{
 };
 use ff::Field;
 
+#[derive(Debug)]
 pub struct PermutationCommitments<C: CurveAffine> {
     permuted_input_commitment: C,
     permuted_table_commitment: C,
@@ -32,7 +33,8 @@ pub struct Evaluated<C: CurveAffine> {
 }
 
 impl<F: FieldExt> Argument<F> {
-    pub(in crate::plonk) fn read_permuted_commitments<
+    /// read
+    pub fn read_permuted_commitments<
         C: CurveAffine,
         E: EncodedChallenge<C>,
         T: TranscriptRead<C, E>,

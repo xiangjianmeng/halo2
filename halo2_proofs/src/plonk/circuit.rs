@@ -761,7 +761,8 @@ impl<F: Field> From<Expression<F>> for Vec<Constraint<F>> {
 pub struct Gate<F: Field> {
     name: &'static str,
     constraint_names: Vec<&'static str>,
-    polys: Vec<Expression<F>>,
+    /// polys
+    pub polys: Vec<Expression<F>>,
     /// We track queried selectors separately from other cells, so that we can use them to
     /// trigger debug checks on gates.
     queried_selectors: Vec<Selector>,

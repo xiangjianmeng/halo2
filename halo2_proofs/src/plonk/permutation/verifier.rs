@@ -10,6 +10,7 @@ use crate::{
     transcript::{EncodedChallenge, TranscriptRead},
 };
 
+#[derive(Debug)]
 pub struct Committed<C: CurveAffine> {
     permutation_product_commitments: Vec<C>,
 }
@@ -30,7 +31,7 @@ pub struct Evaluated<C: CurveAffine> {
 }
 
 impl Argument {
-    pub(crate) fn read_product_commitments<
+    pub fn read_product_commitments<
         C: CurveAffine,
         E: EncodedChallenge<C>,
         T: TranscriptRead<C, E>,

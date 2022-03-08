@@ -17,7 +17,7 @@ use std::io;
 pub struct Argument {
     /// A sequence of columns involved in the argument.
     /// columns
-    columns: Vec<Column<Any>>,
+    pub columns: Vec<Column<Any>>,
 }
 
 impl Argument {

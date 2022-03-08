@@ -26,7 +26,8 @@ pub struct EvaluatedSet<C: CurveAffine> {
 /// xixi
 #[derive(Debug)]
 pub struct CommonEvaluated<C: CurveAffine> {
-    permutation_evals: Vec<C::Scalar>,
+    /// permutation_evals
+    pub permutation_evals: Vec<C::Scalar>,
 }
 
 #[derive(Debug)]

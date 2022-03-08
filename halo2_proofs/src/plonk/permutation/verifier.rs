@@ -18,10 +18,14 @@ pub struct Committed<C: CurveAffine> {
 
 #[derive(Debug)]
 pub struct EvaluatedSet<C: CurveAffine> {
-    permutation_product_commitment: C,
-    permutation_product_eval: C::Scalar,
-    permutation_product_next_eval: C::Scalar,
-    permutation_product_last_eval: Option<C::Scalar>,
+    /// permutation_product_commitment
+    pub permutation_product_commitment: C,
+    /// permutation_product_eval
+    pub permutation_product_eval: C::Scalar,
+    /// permutation_product_next_eval
+    pub permutation_product_next_eval: C::Scalar,
+    /// permutation_product_last_eval
+    pub permutation_product_last_eval: Option<C::Scalar>,
 }
 
 /// xixi

@@ -15,15 +15,19 @@ use ff::Field;
 #[derive(Debug)]
 /// xx
 pub struct PermutationCommitments<C: CurveAffine> {
-    permuted_input_commitment: C,
-    permuted_table_commitment: C,
+    /// permuted_input_commitment
+    pub permuted_input_commitment: C,
+    /// permuted_table_commitment
+    pub permuted_table_commitment: C,
 }
 
 #[derive(Debug)]
 /// xx
 pub struct Committed<C: CurveAffine> {
-    permuted: PermutationCommitments<C>,
-    product_commitment: C,
+    /// permuted
+    pub permuted: PermutationCommitments<C>,
+    /// product_commitment
+    pub product_commitment: C,
 }
 
 #[derive(Debug)]

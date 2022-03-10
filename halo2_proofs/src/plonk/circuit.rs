@@ -799,7 +799,8 @@ pub struct ConstraintSystem<F: Field> {
     pub(crate) num_fixed_columns: usize,
     /// num_advice_columns
     pub num_advice_columns: usize,
-    pub(crate) num_instance_columns: usize,
+    /// num_instance_columns
+    pub num_instance_columns: usize,
     pub(crate) num_selectors: usize,
     pub(crate) selector_map: Vec<Column<Fixed>>,
     /// hehe

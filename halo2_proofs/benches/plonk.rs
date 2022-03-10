@@ -281,7 +281,7 @@ fn criterion_benchmark(c: &mut Criterion) {
     fn verifier(params: &ParamsVerifier<Bn256>, vk: &VerifyingKey<G1Affine>, proof: &[u8]) {
         let strategy = SingleVerifier::new(params);
         let mut transcript = Blake2bRead::<_, _, Challenge255<_>>::init(proof);
-        verify_proof(params, vk, strategy, &[&[]], &mut transcript).unwrap();
+        verify_proof::<_, _, _, _, _>(params, vk, strategy, &[&[]], &mut transcript).unwrap();
     }
 
     let k_range = 8..=16;

@@ -339,9 +339,6 @@ pub fn verify_proof<
                 ),
                 lookups,
             )| {
-                for ele in permutation.queries(vk,x) {
-                    println!("{:?}", ele);
-                };
                 iter::empty()
                     .chain(vk.cs.instance_queries.iter().enumerate().map(
                         move |(query_index, &(column, at))| {

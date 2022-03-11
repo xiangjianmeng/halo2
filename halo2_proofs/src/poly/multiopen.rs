@@ -73,7 +73,7 @@ pub struct ProverQuery<'a, C: CurveAffine> {
 #[derive(Debug, Clone, Copy)]
 pub struct VerifierQuery<'r, C: CurveAffine> {
     /// point at which polynomial is queried
-    point: C::Scalar,
+    pub point: C::Scalar,
     /// commitment to polynomial
     commitment: CommitmentReference<'r, C>,
     /// evaluation of polynomial at query point

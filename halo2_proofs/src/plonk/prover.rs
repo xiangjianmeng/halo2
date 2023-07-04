@@ -131,9 +131,9 @@ pub fn create_proof<
     end_timer!(timer);
     let timer = start_timer!(|| "advice");
     struct AdviceSingle<C: CurveAffine> {
-        pub advice_values: Vec<Polynomial<C::Scalar, LagrangeCoeff>>,
-        pub advice_polys: Vec<Polynomial<C::Scalar, Coeff>>,
-        pub advice_cosets: Vec<Polynomial<C::Scalar, ExtendedLagrangeCoeff>>,
+        pub advice_values: Option<Vec<Polynomial<C::Scalar, LagrangeCoeff>>>,
+        pub advice_polys: Option<Vec<Polynomial<C::Scalar, Coeff>>>,
+        pub advice_cosets: Option<Vec<Polynomial<C::Scalar, ExtendedLagrangeCoeff>>>,
     }
 
     let advice: Vec<AdviceSingle<C>> = circuits
@@ -320,15 +320,10 @@ pub fn create_proof<
                 .map(|poly| domain.lagrange_to_coeff(poly))
                 .collect();
 
-            let advice_cosets: Vec<_> = advice_polys
-                .iter()
-                .map(|poly| domain.coeff_to_extended(poly.clone()))
-                .collect();
-
             Ok(AdviceSingle {
-                advice_values: advice,
-                advice_polys,
-                advice_cosets,
+                advice_values: Some(advice),
+                advice_polys: Some(advice_polys),
+                advice_cosets: None,
             })
         })
         .collect::<Result<Vec<_>, _>>()?;
@@ -353,7 +348,7 @@ pub fn create_proof<
                         params,
                         domain,
                         theta,
-                        &advice.advice_values,
+                        advice.advice_values.as_ref().unwrap(),
                         &pk.fixed_values,
                         &instance.instance_values,
                         transcript,
@@ -363,6 +358,7 @@ pub fn create_proof<
                 .collect()
         })
         .collect::<Result<Vec<_>, _>>()?;
+    end_timer!(timer);
 
     // Sample beta challenge
     let beta: ChallengeBeta<_> = transcript.squeeze_challenge_scalar();
@@ -370,9 +366,7 @@ pub fn create_proof<
     // Sample gamma challenge
     let gamma: ChallengeGamma<_> = transcript.squeeze_challenge_scalar();
 
-    end_timer!(timer);
-    let timer = start_timer!(|| "permutations comitted");
-
+    let timer = start_timer!(|| "permutations committed");
     // Commit to permutations.
     let permutations: Vec<permutation::prover::Committed<C>> = instance
         .iter()
@@ -382,7 +376,7 @@ pub fn create_proof<
                 params,
                 pk,
                 &pk.permutation,
-                &advice.advice_values,
+                advice.advice_values.as_ref().unwrap(),
                 &pk.fixed_values,
                 &instance.instance_values,
                 beta,
@@ -392,10 +386,9 @@ pub fn create_proof<
             )
         })
         .collect::<Result<Vec<_>, _>>()?;
-
     end_timer!(timer);
-    let timer = start_timer!(|| "lookups commited");
 
+    let timer = start_timer!(|| "lookups committed");
     let lookups: Vec<Vec<lookup::prover::Committed<C>>> = lookups
         .into_iter()
         .map(|lookups| -> Result<Vec<_>, _> {
@@ -406,21 +399,47 @@ pub fn create_proof<
                 .collect::<Result<Vec<_>, _>>()
         })
         .collect::<Result<Vec<_>, _>>()?;
-
     end_timer!(timer);
+
     let timer = start_timer!(|| "vanishing commit");
     // Commit to the vanishing argument's random polynomial for blinding h(x_3)
     let vanishing = vanishing::Argument::commit(params, domain, rng, transcript)?;
+    end_timer!(timer);
 
     // Obtain challenge for keeping all separate gates linearly independent
     let y: ChallengeY<_> = transcript.squeeze_challenge_scalar();
 
+    let timer = start_timer!(|| "advice cosets");
+    let advice = advice.into_iter().map(|advice| AdviceSingle::<C> {
+        advice_values: None,
+        advice_polys: advice.advice_polys.clone(),
+        advice_cosets: None,
+    }).collect::<Vec<_>>();
+    let advice = advice
+        .into_iter()
+        .map(|advice| AdviceSingle::<C> {
+            advice_values: None,
+            advice_polys: advice.advice_polys.clone(),
+            advice_cosets: Some(
+                advice
+                    .advice_polys
+                    .unwrap()
+                    .into_iter()
+                    .map(|poly| domain.coeff_to_extended(poly))
+                    .collect(),
+            ),
+        })
+        .collect::<Vec<_>>();
     end_timer!(timer);
+
     let timer = start_timer!(|| "h_poly");
     // Evaluate the h(X) polynomial
     let h_poly = pk.ev.evaluate_h(
         pk,
-        advice.iter().map(|a| &a.advice_cosets).collect(),
+        advice
+            .iter()
+            .map(|a| a.advice_cosets.as_ref().unwrap())
+            .collect(),
         instance.iter().map(|i| &i.instance_cosets).collect(),
         *y,
         *beta,
@@ -429,8 +448,8 @@ pub fn create_proof<
         &lookups,
         &permutations,
     );
-
     end_timer!(timer);
+
     let timer = start_timer!(|| "vanishing construct");
     // Construct the vanishing argument's h(X) commitments
     let vanishing = vanishing.construct(params, domain, h_poly, transcript)?;
@@ -469,7 +488,7 @@ pub fn create_proof<
             .iter()
             .map(|&(column, at)| {
                 eval_polynomial(
-                    &advice.advice_polys[column.index()],
+                    &advice.advice_polys.as_ref().unwrap()[column.index()],
                     domain.rotate_omega(*x, at),
                 )
             })
@@ -545,17 +564,18 @@ pub fn create_proof<
                             poly: &instance.instance_polys[column.index()],
                         }),
                 )
-                .chain(
-                    pk.vk
-                        .cs
-                        .advice_queries
-                        .iter()
-                        .map(move |&(column, at)| ProverQuery {
-                            point: domain.rotate_omega(*x, at),
-                            rotation: at,
-                            poly: &advice.advice_polys[column.index()],
-                        }),
-                )
+                .chain(pk.vk.cs.advice_queries.iter().map(move |&(column, at)| {
+                    ProverQuery {
+                        point: domain.rotate_omega(*x, at),
+                        rotation: at,
+                        poly: advice
+                            .advice_polys
+                            .as_ref()
+                            .unwrap()
+                            .get(column.index())
+                            .unwrap(),
+                    }
+                }))
                 .chain(permutation.open(pk, x))
                 .chain(lookups.iter().flat_map(move |p| p.open(pk, x)).into_iter())
         })

@@ -19,6 +19,7 @@ use group::{
     Curve,
 };
 use rand_core::RngCore;
+use rayon::prelude::ParallelSliceMut;
 use std::any::TypeId;
 use std::convert::TryInto;
 use std::num::ParseIntError;
@@ -28,16 +29,13 @@ use std::{
     iter,
     ops::{Mul, MulAssign},
 };
-use rayon::prelude::ParallelSliceMut;
 
 #[derive(Debug)]
 pub(in crate::plonk) struct Permuted<C: CurveAffine> {
     compressed_input_expression: Polynomial<C::Scalar, LagrangeCoeff>,
     permuted_input_expression: Polynomial<C::Scalar, LagrangeCoeff>,
-    permuted_input_poly: Polynomial<C::Scalar, Coeff>,
     compressed_table_expression: Polynomial<C::Scalar, LagrangeCoeff>,
     permuted_table_expression: Polynomial<C::Scalar, LagrangeCoeff>,
-    permuted_table_poly: Polynomial<C::Scalar, Coeff>,
 }
 
 #[derive(Debug)]
@@ -105,9 +103,8 @@ impl<F: FieldExt> Argument<F> {
 
         // Closure to construct commitment to vector of values
         let commit_values = |values: &Polynomial<C::Scalar, LagrangeCoeff>| {
-            let poly = pk.vk.domain.lagrange_to_coeff(values.clone());
             let commitment = params.commit_lagrange(values).to_affine();
-            (poly, commitment)
+            commitment
         };
 
         // Get values of input expressions involved in the lookup and compress them
@@ -127,12 +124,10 @@ impl<F: FieldExt> Argument<F> {
         )?;
 
         // Commit to permuted input expression
-        let (permuted_input_poly, permuted_input_commitment) =
-            commit_values(&permuted_input_expression);
+        let permuted_input_commitment = commit_values(&permuted_input_expression);
 
         // Commit to permuted table expression
-        let (permuted_table_poly, permuted_table_commitment) =
-            commit_values(&permuted_table_expression);
+        let permuted_table_commitment = commit_values(&permuted_table_expression);
 
         // Hash permuted input commitment
         transcript.write_point(permuted_input_commitment)?;
@@ -143,10 +138,8 @@ impl<F: FieldExt> Argument<F> {
         Ok(Permuted {
             compressed_input_expression,
             permuted_input_expression,
-            permuted_input_poly,
             compressed_table_expression,
             permuted_table_expression,
-            permuted_table_poly,
         })
     }
 }
@@ -285,8 +278,14 @@ impl<C: CurveAffine> Permuted<C> {
         let z = pk.vk.domain.lagrange_to_coeff(z);
 
         Ok(Committed::<C> {
-            permuted_input_poly: self.permuted_input_poly,
-            permuted_table_poly: self.permuted_table_poly,
+            permuted_input_poly: pk
+                .vk
+                .domain
+                .lagrange_to_coeff(self.permuted_input_expression),
+            permuted_table_poly: pk
+                .vk
+                .domain
+                .lagrange_to_coeff(self.permuted_table_expression),
             product_poly: z,
         })
     }

@@ -236,13 +236,9 @@ pub fn best_multiexp<C: CurveAffine>(coeffs: &[C::Scalar], bases: &[C]) -> C::Cu
 pub fn gpu_fft<G: Group>(a: &mut [G], omega: G::Scalar, log_n: u32) {
     use ec_gpu_gen::{fft::FftKernel, rust_gpu_tools::Device};
     use pairing::bn256::Fr;
-    let devices = Device::all();
-    let programs = devices
-        .iter()
-        .map(|device| ec_gpu_gen::program!(device))
-        .collect::<Result<_, _>>()
-        .expect("Cannot create programs!");
-    let mut kern = FftKernel::<Fr>::create(programs).expect("Cannot initialize kernel!");
+    let device = Device::all()[0];
+    let program = ec_gpu_gen::program!(device).expect("Cannot create programs!");
+    let mut kern = FftKernel::<Fr>::create(program).expect("Cannot initialize kernel!");
     let a: &mut [Fr] = unsafe { std::mem::transmute(a) };
     let omega: &Fr = unsafe { std::mem::transmute(&omega) };
     kern.radix_fft_many(&mut [a], &[*omega], &[log_n])
